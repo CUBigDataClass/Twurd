@@ -33,10 +33,11 @@ def bearer_oauth(r):
     r.headers["Authorization"] = f"Bearer {bearer_token}"
     r.headers["User-Agent"] = "v2FilteredStreamPython"
     return r
-
+#"place_id": "01da545b582fc86b"
 def connect_to_endpoint(url, next_token = None):
     query_params = {
                     'expansions': 'author_id,in_reply_to_user_id,geo.place_id',
+                    'place.fields': 'full_name,country_code,country',
                     }
     query_params['next_token'] = next_token
     
@@ -45,14 +46,18 @@ def connect_to_endpoint(url, next_token = None):
     for response_line in response.iter_lines():
         if response_line != None or response_line != '':
             json_response = json.loads(response_line)
-            id = str(json_response['data']['author_id'])
-            user = api.get_user(user_id=id)
-            location = user.location
-            print(location)
+            # id = str(json_response['data']['author_id'])
+            # user = api.get_user(user_id=id)
+            # location = user.location
+            # print(location)
             #print(json_response['data']['author_id'])
-            print(json.dumps(json_response, indent=4, sort_keys=True))
+            if json_response['data']['geo'] and json_response['includes']['places'][0]['country_code'] == "US":
+                print(json.dumps(json_response, indent=4, sort_keys=True))
+                collection.insert_one(json_response)
+                
+            #print(json.dumps(json_response, indent=4, sort_keys=True))
             # mongo tech
-            #collection.insert_one(json_response)
+
     if response.status_code != 200:
         raise Exception(
             "Request returned an error: {} {}".format(

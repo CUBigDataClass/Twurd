@@ -14,7 +14,6 @@ auth.set_access_token(config.ACCESS_TOKEN, config.ACCESS_SECRET)
 api = tweepy.API(auth)
 
 client = MongoClient("mongodb://ishakarki:Boulder92@cluster0-shard-00-00.qwbs1.mongodb.net:27017,cluster0-shard-00-01.qwbs1.mongodb.net:27017,cluster0-shard-00-02.qwbs1.mongodb.net:27017/DaRealDeal?ssl=true&replicaSet=atlas-z12xl7-shard-0&authSource=admin&retryWrites=true&w=majority", tls=True, tlsAllowInvalidCertificates=True)
-db = client.test
 db = client["DaRealDeal"]
 collection = db["us_tweets"]
 
@@ -40,17 +39,20 @@ def connect_to_endpoint(url, next_token = None):
                     "expansions": "author_id,in_reply_to_user_id,geo.place_id",
                     "place.fields": "full_name,country_code,country",
                     }
-    query_params["next_token"] = next_token
+    #query_params["next_token"] = next_token
     
     response = requests.request("GET", url, auth=bearer_oauth, stream=True, params=query_params)
     print(response.status_code)
     for response_line in response.iter_lines():
         if response_line != None or response_line != '':
-            json_response = json.loads(response_line)
-            
-            if json_response['data']['geo'] and json_response['includes']['places'][0]['country_code'] == "US":
-                print(json.dumps(json_response, indent=4, sort_keys=True))
-                collection.insert_one(json_response)
+            try:
+                json_response = json.loads(response_line)
+                if json_response['data']['geo'] and json_response['includes']['places'][0]['country_code'] == "US":
+                    print(json.dumps(json_response, indent=4, sort_keys=True))
+                    collection.insert_one(json_response)
+
+            except:
+                print("EXCEPTION", json_response)
 
             
     if response.status_code != 200:

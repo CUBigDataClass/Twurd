@@ -1,10 +1,13 @@
 import tweepy
 import config
+from pymongo import MongoClient
+# pprint library is used to make the output look more pretty
+from pprint import pprint
 # import pandas as pd
 
 auth = tweepy.OAuthHandler(config.API_KEY, config.API_SECRET)
 auth.set_access_token(config.ACCESS_TOKEN, config.ACCESS_SECRET)
-api = tweepy.API(auth)
+api = tweepy.API(auth, wait_on_rate_limit=True)
 
 class Listener(tweepy.StreamingClient):
     tweets = []
@@ -23,6 +26,6 @@ print("test")
             
 streamer = Listener(bearer_token=config.BEARER_TOKEN)
 streamer.sample()
-for tweet in streamer.tweets:
-    print("test")
-    print(tweet)
+# for tweet in range(10):
+#     print("test")
+#     print(streamer.tweets[tweet])

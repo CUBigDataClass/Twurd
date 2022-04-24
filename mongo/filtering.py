@@ -24,8 +24,7 @@ states = [ '.AK', '.AL', '.AR', '.AZ', '.CA', '.CO', '.CT', '.DE', '.FL', '.GA',
            '.NV', '.NY', '.OH', '.OK', '.OR', '.PA', '.RI', '.SC', '.SD', '.TN', '.TX',
            '.UT', '.VA', '.VT', '.WA', '.WI', '.WV', '.WY']
 
-state = ['.DC']
-for name in state:
+for name in states:
     megastring = ""
     for doc in db.us_tweets.find({"includes.places.0.full_name": { "$regex": name}}):
         temp = cleaner.clean(doc["data"]["text"])

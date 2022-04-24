@@ -17,18 +17,15 @@ db = client["DaRealDeal"]
 
 bearer_token = config.BEARER_TOKEN
 
-states = [ 'AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA',
-           'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME',
-           'MI', 'MN', 'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM',
-           'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX',
-           'UT', 'VA', 'VT', 'WA', 'WI', 'WV', 'WY']
-test = []
+states = [ '.AK', '.AL', '.AR', '.AZ', '.CA', '.CO', '.CT', '.DC', '.DE', '.FL', '.GA',
+           '.HI', '.IA', '.ID', '.IL', '.IN', '.KS', '.KY', '.LA', '.MA', '.MD', '.ME',
+           '.MI', '.MN', '.MO', '.MS', '.MT', '.NC', '.ND', '.NE', '.NH', '.NJ', '.NM',
+           '.NV', '.NY', '.OH', '.OK', '.OR', '.PA', '.RI', '.SC', '.SD', '.TN', '.TX',
+           '.UT', '.VA', '.VT', '.WA', '.WI', '.WV', '.WY']
+
 for name in states:
-    # filtering
-    test = db.us_tweets.find({"includes": {"places": {"0": {"full_name": "Oakland, CA"} }}})
+    print(name)
+    for doc in db.us_tweets.find({"includes.places.0.full_name": { "$regex": name}}):
+        print(doc)
 
-print(test)
 
-
-for i in test:
-    print(i)

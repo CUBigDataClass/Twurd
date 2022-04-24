@@ -6,6 +6,7 @@ import json
 import tweepy
 import config
 from pymongo import MongoClient
+import cleaner
 
 auth = tweepy.OAuthHandler(config.API_KEY, config.API_SECRET)
 auth.set_access_token(config.ACCESS_TOKEN, config.ACCESS_SECRET)
@@ -23,9 +24,14 @@ states = [ '.AK', '.AL', '.AR', '.AZ', '.CA', '.CO', '.CT', '.DC', '.DE', '.FL',
            '.NV', '.NY', '.OH', '.OK', '.OR', '.PA', '.RI', '.SC', '.SD', '.TN', '.TX',
            '.UT', '.VA', '.VT', '.WA', '.WI', '.WV', '.WY']
 
-for name in states:
-    print(name)
+state = [ '.AK' ]
+
+for name in state:
+    megastring = ""
     for doc in db.us_tweets.find({"includes.places.0.full_name": { "$regex": name}}):
-        print(doc)
+        temp = cleaner.clean(doc["data"]["text"])
+        megastring += temp
+    print(megastring)
+    
 
 

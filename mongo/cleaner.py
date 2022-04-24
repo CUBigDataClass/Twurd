@@ -1,13 +1,13 @@
 import pandas as pd
 import re
-from nltk.tokenize import word_tokenize
+# from nltk.tokenize import word_tokenize
 import json
 
-df = pd.read_csv('D:\Documents\Twurd\Twurd_temp\\all_annotated.tsv', sep='\t', header=0)
+# df = pd.read_csv('D:\Documents\Twurd\Twurd_temp\\all_annotated.tsv', sep='\t', header=0)
 # print(df.columns)
 
-df = df[df['Definitely English'] == 1]
-df.drop(df.columns[[4,5,6,7,8,9]], axis=1, inplace=True)
+# df = df[df['Definitely English'] == 1]
+# df.drop(df.columns[[4,5,6,7,8,9]], axis=1, inplace=True)
 # print(len(df))
 
 freq = {'allc': {}}
@@ -34,7 +34,8 @@ def remove_emojis(data): #https://stackoverflow.com/a/58356570
         u"\ufe0f"  # dingbats
         u"\u3030"
                       "]+", re.UNICODE)
-    return re.sub(emoj, ' ', data)
+    words = re.sub(emoj, ' ', data)
+    return re.sub(' +', ' ', words)
 
 def clean(tweet): #https://stackoverflow.com/q/64719706
     tweet = re.sub(r"(?:\@|http?\://|\\n|https?\://|www)\S+", "", tweet)
@@ -44,35 +45,35 @@ def clean(tweet): #https://stackoverflow.com/q/64719706
     tweet = regex.sub('', tweet)
     tweet = tweet.lower()
     #Out: 'abdE'
-    tweetlist = word_tokenize(tweet)
-    return tweetlist
+    # tweetlist = word_tokenize(tweet)
+    return tweet
 
-for index, row in df.iterrows():
-    country = row["Country"]
-    # print(country)
-    if country not in freq:
-        # print("Adding country " + str(country))
-        freq[country] = {}
-    if country in freq:
-        for word in clean(row['Tweet']):
-            if word not in freq['allc']:
-                freq['allc'][word] = 1
-                freq[country][word] = 1
-                # print("New word: " + word)
-            else:
-                freq['allc'][word] += 1
+# for index, row in df.iterrows():
+#     country = row["Country"]
+#     # print(country)
+#     if country not in freq:
+#         # print("Adding country " + str(country))
+#         freq[country] = {}
+#     if country in freq:
+#         for word in clean(row['Tweet']):
+#             if word not in freq['allc']:
+#                 freq['allc'][word] = 1
+#                 freq[country][word] = 1
+#                 # print("New word: " + word)
+#             else:
+#                 freq['allc'][word] += 1
                 
-                if word not in freq[country]:
-                    freq[country][word] = 1
-                else:
-                    freq[country][word] += 1
+#                 if word not in freq[country]:
+#                     freq[country][word] = 1
+#                 else:
+#                     freq[country][word] += 1
 
-sortedfreq = {}                    
-for keys in freq:
-    sortedfreq[keys] = dict(sorted(freq[keys].items(), key=lambda item: item[1], reverse=True))
+# sortedfreq = {}                    
+# for keys in freq:
+#     sortedfreq[keys] = dict(sorted(freq[keys].items(), key=lambda item: item[1], reverse=True))
                 
-with open('frequencies.json', 'w') as f:
-    json.dump(freq, f)
+# with open('frequencies.json', 'w') as f:
+#     json.dump(freq, f)
     
-with open('sortedfrequencies.json', 'w') as f:
-    json.dump(sortedfreq, f)
+# with open('sortedfrequencies.json', 'w') as f:
+#     json.dump(sortedfreq, f)
